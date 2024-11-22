@@ -1,11 +1,13 @@
 FROM python:3.10-slim
 
+RUN apt-get update && apt-get install -y netcat-traditional
+
 WORKDIR /app
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY requirements.txt .
+COPY . /app
 
-RUN pip install -r requirements.txt
+RUN chmod +x /app/entrypoint.sh
 
-COPY . .
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["/app/entrypoint.sh"]

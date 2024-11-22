@@ -3,25 +3,25 @@ version: '3.8'
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./my_test_project:/app
     ports:
       - "8000:8000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+    volumes:
+      - .:/app  # Монтируем весь проект в контейнер
     depends_on:
       - db
 
   db:
     image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-      - ./postgres-init:/docker-entrypoint-initdb.d/
     environment:
-      POSTGRES_DB: django
       POSTGRES_USER: django
       POSTGRES_PASSWORD: django
-    ports:
-      - "5434:5432"
+      POSTGRES_DB: django
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./postgres-init:/docker-entrypoint-initdb.d/  # Если у вас есть начальный SQL для инициализации
 
 volumes:
   postgres_data:
